@@ -15,7 +15,8 @@ from fastapi.staticfiles import StaticFiles
 
 
 whisper_class = whisper()
-
+model_name = 'tiny'
+model = whisper.load_model(model_name)
 app = FastAPI()
 
 origins = [
@@ -92,8 +93,9 @@ class POST_DATE():
 
     def transcribe_audio(self):
         # Вызов whisper
-        text = whisper.transcribe(data=self.audio_chank if self.is_final_chunk is False else self.audio_data)
-        return text
+        text = whisper.transcribe(data=self.audio_data)
+        
+        return text["text"]
 
 
 @app.post(path="/proccess_audio")
