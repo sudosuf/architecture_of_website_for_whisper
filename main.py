@@ -34,7 +34,7 @@ logger = HostLoggerAdapter(logging.getLogger(__name__), {})
 # model = whisper.load_model('tiny')
 ##################################### ИНИЦИАЛИЗАЦИЯ МОДЕЛИ WHISPER #####################################################
 dict = {str: np.float32}
-
+print("Cтатус видеокарты: ", torch.cuda.is_available())
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
 
