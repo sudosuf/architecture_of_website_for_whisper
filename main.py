@@ -35,7 +35,7 @@ logger = HostLoggerAdapter(logging.getLogger(__name__), {})
 ##################################### ИНИЦИАЛИЗАЦИЯ МОДЕЛИ WHISPER #####################################################
 dict = {str: np.float32}
 
-device = "cpu"
+device = "cuda:0" if torch.cuda.is_available() else "cpu"
 torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
 
 model_id = "openai/whisper-large-v3"
@@ -53,9 +53,7 @@ pipe = pipeline(
     tokenizer=processor.tokenizer,
     feature_extractor=processor.feature_extractor,
     max_new_tokens=128,
-    chunk_length_s=30,
     batch_size=16,
-    return_timestamps=True,
     torch_dtype=torch_dtype,
     device=device,
 )
