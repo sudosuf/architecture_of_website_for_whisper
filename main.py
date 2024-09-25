@@ -5,7 +5,9 @@ from io import BytesIO
 from pydantic import BaseModel
 from starlette.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline
+from transformers import (AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline, WhisperForConditionalGeneration,
+                          WhisperProcessor, WhisperTokenizer, AutomaticSpeechRecognitionPipeline)
+from peft import PeftModel, PeftConfig
 import torch
 import time
 import logging
@@ -37,25 +39,26 @@ dict = {str: np.float32}
 print("Cтатус видеокарты: ", torch.cuda.is_available())
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 torch_dtype = torch.bfloat16 if torch.cuda.is_available() else torch.float32
-
+task = "automatic-speech-recognition"
 model_id = "openai/whisper-large-v3"
-
-model = AutoModelForSpeechSeq2Seq.from_pretrained(
-    model_id, torch_dtype=torch_dtype
+path_to_model = "Whisper/model"
+path_to_adapter = "Whisper/adapter"
+peft_config = PeftConfig.from_pretrained(path_to_adapter)
+model = WhisperForConditionalGeneration.from_pretrained(
+    model_id
 )
+#
+model = PeftModel.from_pretrained(model, model_id=path_to_adapter)
 model.to(device)
+tokenizer = WhisperTokenizer.from_pretrained(model_id, language="russian", task=task)
+processor = WhisperProcessor.from_pretrained(model_id, language="russian", task=task)
 
-processor = AutoProcessor.from_pretrained(model_id)
-
-pipe = pipeline(
-    "automatic-speech-recognition",
+pipe = AutomaticSpeechRecognitionPipeline(
     model=model,
-    tokenizer=processor.tokenizer,
+    tokenizer=tokenizer,
     feature_extractor=processor.feature_extractor,
-    max_new_tokens=128,
     batch_size=16,
     torch_dtype=torch_dtype,
-    device=device,
 )
 ########################################################################################################################
 ############################################ ИНИЦИАЛИЗАЦИЯ FAST API ####################################################
