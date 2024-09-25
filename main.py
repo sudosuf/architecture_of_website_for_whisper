@@ -59,6 +59,7 @@ pipe = AutomaticSpeechRecognitionPipeline(
     feature_extractor=processor.feature_extractor,
     batch_size=16,
     torch_dtype=torch_dtype,
+    device=device
 )
 ########################################################################################################################
 ############################################ ИНИЦИАЛИЗАЦИЯ FAST API ####################################################
