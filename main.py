@@ -41,7 +41,7 @@ logger = HostLoggerAdapter(logging.getLogger(__name__), {})
 
 dict = {str: np.float32}
 dict_ending = {str: np.float32}
-dict_recognise_summary = {str: float}
+dict_recognise_summary = {str: str}
 
 ##################################### ИНИЦИАЛИЗАЦИЯ МОДЕЛИ WHISPER #####################################################
 print("Cтатус видеокарты: ", torch.cuda.is_available())
@@ -177,11 +177,10 @@ async def process_audio(request: Request, file: UploadFile = File(...), is_final
     time_start = time.time()
     time_query = add_logger_information(request)
     host = request.client.host  # охранение ip  с которого поступил файл
+    audio_data = prepaireAudio(host, audio_bytes)  # Подготовка файла к распознаванию по чанкам
 
     if not is_final_chunk:
         try:
-
-            audio_data = prepaireAudio(host, audio_bytes) #Подготовка файла к распознаванию по чанкам
 
             result = pipe(audio_data, generate_kwargs={"language": "russian"})
 
@@ -211,8 +210,9 @@ async def process_audio(request: Request, file: UploadFile = File(...), is_final
         time_end = time.time()
         print("time for work: ", time_end - time_start)
         dict[f"{str(host)}"] = []
-        return {'result': result["text"]}
+        dict_ending[f"{str(host)}"] = []
+        dict_recognise_summary[f"{str(host)}"] = ""
+        return {'transcription': result["text"]}
 
 
 app.mount('', StaticFiles(directory='./', html=True), name='static')
-
