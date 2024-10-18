@@ -55,7 +55,7 @@ path_to_model = "Whisper/model"
 path_to_adapter = "Whisper/adapter"
 peft_config = PeftConfig.from_pretrained(path_to_adapter)
 model = WhisperForConditionalGeneration.from_pretrained(
-    model_id
+    path_to_model
 )
 #
 #model = PeftModel.from_pretrained(model, model_id=path_to_adapter)
