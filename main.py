@@ -15,6 +15,8 @@ import traceback
 import json
 from pydub import AudioSegment
 import threading as th
+from embedings_similar import EmbedingSimilar
+from replace_eng_word import replaceEngWord
 #Нужно сохранять в буфере по 2 элемента, а затем искать одинаковораспознаные элементы в текущем чанке и суммированном тексте: "Покажи объем добычи 15 или *8*", "или 8 марта".
 # В результирующем тексте после каждого чанка, надо не выводить не по 1 слову, а по два (95 строка) и вырезать из массива тайминг начала 2-го слова с конца (105 строка)
 ################################################# ЛОГИРОВАНИЕ ##########################################################
@@ -70,6 +72,8 @@ pipe = AutomaticSpeechRecognitionPipeline(
     device=device,
     return_timestamps="word"
 )
+
+mod = EmbedingSimilar()
 ########################################################################################################################
 ############################################ ИНИЦИАЛИЗАЦИЯ FAST API ####################################################
 app = FastAPI()
@@ -209,10 +213,14 @@ async def process_audio(request: Request, file: UploadFile = File(...), is_final
         p.start()
         time_end = time.time()
         print("time for work: ", time_end - time_start)
+
+        text = mod.similr_text(result["text"])
+        text = replaceEngWord(text)
+
         dict[f"{str(host)}"] = []
         dict_ending[f"{str(host)}"] = []
         dict_recognise_summary[f"{str(host)}"] = ""
-        return {'transcription': result["text"]}
+        return {'transcription': text}
 
 
 app.mount('', StaticFiles(directory='./', html=True), name='static')
