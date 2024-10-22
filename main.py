@@ -46,7 +46,7 @@ dict_recognise_summary = {str: str}
 ##################################### ИНИЦИАЛИЗАЦИЯ МОДЕЛИ WHISPER #####################################################
 print("Cтатус видеокарты: ", torch.cuda.is_available())
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
-torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
+torch_dtype = torch.bfloat16 if torch.cuda.is_available() else torch.float32
 task = "automatic-speech-recognition"
 model_id = "openai/whisper-large-v3"
 path_to_model = "Whisper/model"
