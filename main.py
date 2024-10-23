@@ -182,21 +182,21 @@ async def process_audio(request: Request, file: UploadFile = File(...), is_final
     if not is_final_chunk:
         try:
 
-            result = pipe(audio_data, generate_kwargs={"language": "russian"})
+            # result = pipe(audio_data, generate_kwargs={"language": "russian"})
 
-            pr = th.Thread(target=findLastTimestampsAndSave, args=(result, audio_data, host))
-            pr.start()
+            # pr = th.Thread(target=findLastTimestampsAndSave, args=(result, audio_data, host))
+            # pr.start()
 
-            summury_text = summaryRecognize(result["text"], host)  # Сумируем распознвный текст в словарь
+            # summury_text = summaryRecognize(result["text"], host)  # Сумируем распознвный текст в словарь
 
-            print("result: ", result)
+            # print("result: ", result)
 
-            logger.info("Recognized audio chunk", extra={"client_host": host})
+            # logger.info("Recognized audio chunk", extra={"client_host": host})
 
-            time_end = time.time()
-            print("time for work: ", time_end - time_start)
-            pr.join(timeout=10.00)
-            return {"transcription": summury_text}
+            # time_end = time.time()
+            # print("time for work: ", time_end - time_start)
+            # pr.join(timeout=10.00)
+            return {"transcription": "..."}
         except Exception as e:
             host = request.client.host
             logger.critical(f"Error in worked: {traceback.format_exc()}", extra={"client_host": host})
