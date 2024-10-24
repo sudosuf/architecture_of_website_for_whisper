@@ -5,6 +5,6 @@ COPY requirements.txt /code/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 COPY . /code
 RUN mkdir save-audio
-EXPOSE 8081
+EXPOSE 5064
 VOLUME code/save-audio
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8081",  "--log-level", "trace"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5064",  "--log-level", "trace"]
